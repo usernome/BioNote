@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BioNote</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f7f3;
+      color: #1c1c1c;
+    }
+
+    .app {
+      max-width: 430px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #ffffff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .status-space {
+      height: 20px;
+    }
+
+    .topbar {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      background: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 19px;
+      color: #0b6418;
+      font-weight: 800;
+      text-align: center;
+      flex: 1;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: transparent;
+      color: #0b6418;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .back-btn {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .plus-btn {
+      font-size: 32px;
+      font-weight: 300;
+    }
+
+    .content {
+      padding: 18px 22px 30px;
+    }
+
+    .welcome-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .welcome-title {
+      font-size: 21px;
+      font-weight: 800;
+      margin-bottom: 9px;
+    }
+
+    .welcome-text {
+      font-size: 14px;
+      line-height: 1.45;
+      color: #333;
+    }
+
+    .plant-emoji {
+      font-size: 70px;
+      line-height: 1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .home-card {
+      height: 120px;
+      border: 1px solid #e2e2e2;
+      border-radius: 9px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .home-card .big-icon {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    .home-card span {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .search-box {
+      width: 100%;
+      height: 43px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 14px;
+    }
+
+    .plant-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .plant-item {
+      min-height: 70px;
+      border: 1px solid #e3e3e3;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      padding: 9px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .plant-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f1f1f1;
+      margin-right: 12px;
+    }
+
+    .plant-info {
+      flex: 1;
+    }
+
+    .plant-name {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .plant-date {
+      font-size: 13px;
+      color: #333;
+    }
+
+    .arrow {
+      font-size: 27px;
+      color: #111;
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .form-header img {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+
+    .form-header-title {
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 3px;
+    }
+
+    .form-header-date {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 78px 38px;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .form-row label {
+      font-size: 14px;
+      color: #222;
+    }
+
+    .form-row input {
+      height: 38px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0 9px;
+      font-size: 14px;
+      outline: none;
+      text-align: center;
+      background: #fff;
+    }
+
+    .unit {
+      font-size: 13px;
+      color: #222;
+    }
+
+    .date-input {
+      height: 39px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0 8px;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+
+    .save-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 7px;
+      background: linear-gradient(90deg, #0d6d23, #168a2d);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      margin-top: 26px;
+      cursor: pointer;
+    }
+
+    .secondary-btn {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #0d6d23;
+      border-radius: 8px;
+      background: #fff;
+      color: #0d6d23;
+      font-size: 14px;
+      font-weight: 800;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .add-form input,
+    .add-form textarea,
+    .add-form select {
+      width: 100%;
+      height: 43px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0 12px;
+      margin-bottom: 11px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+
+    .add-form textarea {
+      height: 80px;
+      padding-top: 10px;
+      resize: none;
+    }
+
+    .photo-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin: 10px 0;
+    }
+
+    .photo-buttons button {
+      height: 43px;
+      border: 1px solid #0d6d23;
+      border-radius: 8px;
+      background: #fff;
+      color: #0d6d23;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .preview-img {
+      width: 100%;
+      max-height: 190px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      display: none;
+      margin: 10px 0 6px;
+    }
+
+    .drawer-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.25);
+      z-index: 90;
+      display: none;
+    }
+
+    .drawer {
+      position: fixed;
+      left: -270px;
+      top: 0;
+      width: 260px;
+      height: 100vh;
+      background: #ffffff;
+      z-index: 100;
+      box-shadow: 3px 0 16px rgba(0,0,0,0.18);
+      padding: 28px 18px;
+      transition: 0.25s;
+    }
+
+    .drawer.open {
+      left: 0;
+    }
+
+    .drawer-bg.open {
+      display: block;
+    }
+
+    .drawer-title {
+      color: #0b6418;
+      font-size: 23px;
+      font-weight: 900;
+      margin-bottom: 25px;
+    }
+
+    .drawer button {
+      width: 100%;
+      height: 43px;
+      border: none;
+      background: #f4f8f4;
+      color: #111;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      text-align: left;
+      padding-left: 13px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .history-card,
+    .analysis-card {
+      border: 1px solid #e1e1e1;
+      border-radius: 9px;
+      background: #fff;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .history-card b,
+    .analysis-card b {
+      color: #0b6418;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .photo-grid img {
+      width: 100%;
+      height: 135px;
+      object-fit: cover;
+      border-radius: 9px;
+      border: 1px solid #ddd;
+    }
+
+    .empty {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-top: 45px;
+      line-height: 1.5;
+    }
+
+    .small-note {
+      font-size: 12px;
+      color: #666;
+      margin-top: 7px;
+      line-height: 1.4;
+    }
+
+    canvas {
+      width: 100%;
+      height: 210px;
+      border: 1px solid #e1e1e1;
+      border-radius: 10px;
+      margin-top: 12px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="status-space"></div>
+
+    <div id="drawerBg" class="drawer-bg" onclick="closeDrawer()"></div>
+
+    <div id="drawer" class="drawer">
+      <div class="drawer-title">BioNote</div>
+      <button onclick="goPage('homePage'); closeDrawer()">Bosh sahifa</button>
+      <button onclick="goPage('addPlantPage'); closeDrawer()">O‘simlik qo‘shish</button>
+      <button onclick="goPage('listPage'); closeDrawer()">O‘simliklar ro‘yxati</button>
+      <button onclick="openMeasurementPage(); closeDrawer()">Biometrik o‘lchov kiritish</button>
+      <button onclick="goPage('historyPage'); renderHistory(); closeDrawer()">Kuzatuv tarixi</button>
+      <button onclick="goPage('photosPage'); renderPhotos(); closeDrawer()">Fotosuratlar</button>
+      <button onclick="goPage('analysisPage'); renderAnalysis(); closeDrawer()">Tahlil natijalari</button>
+      <button onclick="clearAllData()">Barcha ma’lumotlarni tozalash</button>
+    </div>
+
+    <section id="homePage" class="page active">
+      <div class="topbar">
+        <button class="icon-btn" onclick="openDrawer()">☰</button>
+        <h1>BioNote</h1>
+        <div style="width:34px"></div>
+      </div>
+
+      <div class="content">
+        <div class="welcome-row">
+          <div>
+            <div class="welcome-title">O‘simliklar tahlili!</div>
+            <div class="welcome-text">O‘simliklarini kuzatish va ma’lumotlarni tahlil qilish ilovasi.</div>
+          </div>
+          <div class="plant-emoji">🪴</div>
+        </div>
+
+        <div class="grid">
+          <div class="home-card" onclick="goPage('addPlantPage')">
+            <div class="big-icon">➕</div>
+            <span>O‘simlik<br>qo‘shish</span>
+          </div>
+
+          <div class="home-card" onclick="goPage('listPage')">
+            <div class="big-icon">📋</div>
+            <span>O‘simliklar<br>ro‘yxati</span>
+          </div>
+
+          <div class="home-card" onclick="openMeasurementPage()">
+            <div class="big-icon">📏</div>
+            <span>Biometrik<br>o‘lchov kiritish</span>
+          </div>
+
+          <div class="home-card" onclick="goPage('historyPage'); renderHistory()">
+            <div class="big-icon">🗓️</div>
+            <span>Kuzatuv<br>tarixi</span>
+          </div>
+
+          <div class="home-card" onclick="goPage('photosPage'); renderPhotos()">
+            <div class="big-icon">📷</div>
+            <span>Fotosuratlar</span>
+          </div>
+
+          <div class="home-card" onclick="goPage('analysisPage'); renderAnalysis()">
+            <div class="big-icon">📊</div>
+            <span>Tahlil<br>natijalari</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="listPage" class="page">
+      <div class="topbar">
+        <button class="icon-btn back-btn" onclick="goPage('homePage')">‹</button>
+        <h1>O‘simliklar ro‘yxati</h1>
+        <button class="icon-btn plus-btn" onclick="goPage('addPlantPage')">+</button>
+      </div>
+
+      <div class="content">
+        <input id="searchInput" class="search-box" type="text" placeholder="Qidirish..." oninput="renderPlantList()" />
+        <div id="plantList" class="plant-list"></div>
+      </div>
+    </section>
+
+    <section id="addPlantPage" class="page">
+      <div class="topbar">
+        <button class="icon-btn back-btn" onclick="goPage('homePage')">‹</button>
+        <h1>O‘simlik qo‘shish</h1>
+        <div style="width:34px"></div>
+      </div>
+
+      <div class="content">
+        <div class="add-form">
+          <input id="plantName" type="text" placeholder="O‘simlik nomi" />
+          <input id="plantType" type="text" placeholder="Turi yoki navi" />
+          <input id="plantDate" type="date" />
+          <input id="plantPlace" type="text" placeholder="Joylashuvi" />
+          <textarea id="plantNote" placeholder="Izoh"></textarea>
+
+          <div class="photo-buttons">
+            <button onclick="document.getElementById('plantCameraInput').click()">Kamera</button>
+            <button onclick="document.getElementById('plantGalleryInput').click()">Galereya</button>
+          </div>
+
+          <input id="plantCameraInput" type="file" accept="image/*" capture="environment" onchange="loadPlantPhoto(event)" />
+          <input id="plantGalleryInput" type="file" accept="image/*" onchange="loadPlantPhoto(event)" />
+
+          <img id="plantPreview" class="preview-img" alt="Tanlangan rasm" />
+
+          <button class="save-btn" onclick="savePlant()">Saqlash</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="measurePage" class="page">
+      <div class="topbar">
+        <button class="icon-btn back-btn" onclick="goPage('homePage')">‹</button>
+        <h1>Biometrik o‘lchov kiritish</h1>
+        <div style="width:34px"></div>
+      </div>
+
+      <div class="content">
+        <div class="form-header">
+          <img id="selectedPlantImg" src="assets/pomidor.png" onerror="this.src='assets/default-plant.png'" alt="O‘simlik" />
+          <div>
+            <div id="selectedPlantName" class="form-header-title">Pomidor</div>
+            <div id="selectedPlantDate" class="form-header-date">25.04.2024</div>
+          </div>
+        </div>
+
+        <div class="add-form">
+          <select id="measurePlantSelect" onchange="updateSelectedPlantHeader()"></select>
+        </div>
+
+        <div class="form-row">
+          <label>Bo‘y</label>
+          <input id="heightVal" type="number" step="0.1" value="35.6" />
+          <div class="unit">sm</div>
+        </div>
+
+        <div class="form-row">
+          <label>Barg soni</label>
+          <input id="leafVal" type="number" step="1" value="12" />
+          <div class="unit">dona</div>
+        </div>
+
+        <div class="form-row">
+          <label>Poya qalinligi</label>
+          <input id="stemVal" type="number" step="0.1" value="6.2" />
+          <div class="unit">mm</div>
+        </div>
+
+        <div class="form-row">
+          <label>Ildiz uzunligi</label>
+          <input id="rootVal" type="number" step="0.1" value="18.4" />
+          <div class="unit">sm</div>
+        </div>
+
+        <div class="form-row">
+          <label>Barg maydoni</label>
+          <input id="areaVal" type="number" step="0.1" value="45.7" />
+          <div class="unit">sm²</div>
+        </div>
+
+        <div class="form-row">
+          <label>Biomassa</label>
+          <input id="bioVal" type="number" step="0.1" value="28.3" />
+          <div class="unit">g</div>
+        </div>
+
+        <div class="form-row">
+          <label>Sana</label>
+          <input id="measureDate" class="date-input" type="date" />
+          <div class="unit"></div>
+        </div>
+
+        <div class="photo-buttons">
+          <button onclick="document.getElementById('measureCameraInput').click()">Kamera</button>
+          <button onclick="document.getElementById('measureGalleryInput').click()">Galereya</button>
+        </div>
+
+        <input id="measureCameraInput" type="file" accept="image/*" capture="environment" onchange="loadMeasurePhoto(event)" />
+        <input id="measureGalleryInput" type="file" accept="image/*" onchange="loadMeasurePhoto(event)" />
+
+        <img id="measurePreview" class="preview-img" alt="Kuzatuv rasmi" />
+
+        <button class="save-btn" onclick="saveMeasurement()">Saqlash</button>
+      </div>
+    </section>
+
+    <section id="historyPage" class="page">
+      <div class="topbar">
+        <button class="icon-btn back-btn" onclick="goPage('homePage')">‹</button>
+        <h1>Kuzatuv tarixi</h1>
+        <div style="width:34px"></div>
+      </div>
+
+      <div class="content">
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <section id="photosPage" class="page">
+      <div class="topbar">
+        <button class="icon-btn back-btn" onclick="goPage('homePage')">‹</button>
+        <h1>Fotosuratlar</h1>
+        <div style="width:34px"></div>
+      </div>
+
+      <div class="content">
+        <div id="photoGrid" class="photo-grid"></div>
+      </div>
+    </section>
+
+    <section id="analysisPage" class="page">
+      <div class="topbar">
+        <button class="icon-btn back-btn" onclick="goPage('homePage')">‹</button>
+        <h1>Tahlil natijalari</h1>
+        <div style="width:34px"></div>
+      </div>
+
+      <div class="content">
+        <div id="analysisBox"></div>
+        <canvas id="chartCanvas" width="360" height="220"></canvas>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "bionote_data_v1";
+
+    let plantPhotoBase64 = "";
+    let measurePhotoBase64 = "";
+
+    const defaultData = {
+      plants: [
+        {
+          id: 1,
+          name: "Pomidor",
+          type: "Sabzavot",
+          date: "2024-04-25",
+          place: "Issiqxona",
+          note: "",
+          image: "assets/pomidor.png"
+        },
+        {
+          id: 2,
+          name: "Bodring",
+          type: "Sabzavot",
+          date: "2024-04-20",
+          place: "Issiqxona",
+          note: "",
+          image: "assets/bodring.png"
+        },
+        {
+          id: 3,
+          name: "Qalampir",
+          type: "Sabzavot",
+          date: "2024-04-18",
+          place: "Dala",
+          note: "",
+          image: "assets/qalampir.png"
+        },
+        {
+          id: 4,
+          name: "Baqla",
+          type: "Dukkakli",
+          date: "2024-04-15",
+          place: "Dala",
+          note: "",
+          image: "assets/baqla.png"
+        },
+        {
+          id: 5,
+          name: "Marul",
+          type: "Ko‘kat",
+          date: "2024-04-12",
+          place: "Tomorqa",
+          note: "",
+          image: "assets/marul.png"
+        }
+      ],
+      measurements: [
+        {
+          id: 1,
+          plantId: 1,
+          date: "2024-04-25",
+          height: 35.6,
+          leaf: 12,
+          stem: 6.2,
+          root: 18.4,
+          area: 45.7,
+          biomass: 28.3,
+          photo: ""
+        }
+      ]
+    };
+
+    function getData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
+      return defaultData;
+    }
+
+    function setData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function formatDate(dateText) {
+      if (!dateText) return "";
+      const parts = dateText.split("-");
+      if (parts.length !== 3) return dateText;
+      return parts[2] + "." + parts[1] + "." + parts[0];
+    }
+
+    function todayDate() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function goPage(pageId) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById(pageId).classList.add("active");
+
+      if (pageId === "listPage") renderPlantList();
+      if (pageId === "photosPage") renderPhotos();
+      if (pageId === "historyPage") renderHistory();
+      if (pageId === "analysisPage") renderAnalysis();
+    }
+
+    function openDrawer() {
+      document.getElementById("drawer").classList.add("open");
+      document.getElementById("drawerBg").classList.add("open");
+    }
+
+    function closeDrawer() {
+      document.getElementById("drawer").classList.remove("open");
+      document.getElementById("drawerBg").classList.remove("open");
+    }
+
+    function renderPlantList() {
+      const data = getData();
+      const list = document.getElementById("plantList");
+      const q = (document.getElementById("searchInput")?.value || "").toLowerCase();
+      const plants = data.plants.filter(p => p.name.toLowerCase().includes(q));
+
+      if (plants.length === 0) {
+        list.innerHTML = `<div class="empty">O‘simlik topilmadi.</div>`;
+        return;
+      }
+
+      list.innerHTML = plants.map(p => `
+        <div class="plant-item" onclick="selectPlantAndMeasure(${p.id})">
+          <img class="plant-img" src="${p.image || 'assets/default-plant.png'}" onerror="this.src='assets/default-plant.png'" alt="${p.name}">
+          <div class="plant-info">
+            <div class="plant-name">${p.name}</div>
+            <div class="plant-date">${formatDate(p.date)}</div>
+          </div>
+          <div class="arrow">›</div>
+        </div>
+      `).join("");
+    }
+
+    function savePlant() {
+      const name = document.getElementById("plantName").value.trim();
+      const type = document.getElementById("plantType").value.trim();
+      const date = document.getElementById("plantDate").value || todayDate();
+      const place = document.getElementById("plantPlace").value.trim();
+      const note = document.getElementById("plantNote").value.trim();
+
+      if (!name) {
+        alert("O‘simlik nomini kiriting.");
+        return;
+      }
+
+      const data = getData();
+      const id = Date.now();
+
+      data.plants.push({
+        id,
+        name,
+        type,
+        date,
+        place,
+        note,
+        image: plantPhotoBase64 || "assets/default-plant.png"
+      });
+
+      setData(data);
+
+      document.getElementById("plantName").value = "";
+      document.getElementById("plantType").value = "";
+      document.getElementById("plantDate").value = todayDate();
+      document.getElementById("plantPlace").value = "";
+      document.getElementById("plantNote").value = "";
+      document.getElementById("plantPreview").style.display = "none";
+      plantPhotoBase64 = "";
+
+      alert("O‘simlik saqlandi.");
+      goPage("listPage");
+    }
+
+    function loadPlantPhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        plantPhotoBase64 = e.target.result;
+        const preview = document.getElementById("plantPreview");
+        preview.src = plantPhotoBase64;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadMeasurePhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        measurePhotoBase64 = e.target.result;
+        const preview = document.getElementById("measurePreview");
+        preview.src = measurePhotoBase64;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function openMeasurementPage() {
+      renderPlantSelect();
+      goPage("measurePage");
+      updateSelectedPlantHeader();
+    }
+
+    function renderPlantSelect() {
+      const data = getData();
+      const select = document.getElementById("measurePlantSelect");
+
+      select.innerHTML = data.plants.map(p => `
+        <option value="${p.id}">${p.name}</option>
+      `).join("");
+
+      if (data.plants.length === 0) {
+        select.innerHTML = `<option value="">O‘simlik yo‘q</option>`;
+      }
+    }
+
+    function selectPlantAndMeasure(id) {
+      openMeasurementPage();
+      setTimeout(() => {
+        document.getElementById("measurePlantSelect").value = id;
+        updateSelectedPlantHeader();
+      }, 20);
+    }
+
+    function updateSelectedPlantHeader() {
+      const data = getData();
+      const select = document.getElementById("measurePlantSelect");
+      const plantId = Number(select.value);
+      const plant = data.plants.find(p => p.id === plantId) || data.plants[0];
+
+      if (!plant) return;
+
+      document.getElementById("selectedPlantImg").src = plant.image || "assets/default-plant.png";
+      document.getElementById("selectedPlantName").textContent = plant.name;
+      document.getElementById("selectedPlantDate").textContent = formatDate(plant.date);
+    }
+
+    function saveMeasurement() {
+      const data = getData();
+      const plantId = Number(document.getElementById("measurePlantSelect").value);
+
+      if (!plantId) {
+        alert("O‘simlik tanlang.");
+        return;
+      }
+
+      const measurement = {
+        id: Date.now(),
+        plantId,
+        date: document.getElementById("measureDate").value || todayDate(),
+        height: Number(document.getElementById("heightVal").value || 0),
+        leaf: Number(document.getElementById("leafVal").value || 0),
+        stem: Number(document.getElementById("stemVal").value || 0),
+        root: Number(document.getElementById("rootVal").value || 0),
+        area: Number(document.getElementById("areaVal").value || 0),
+        biomass: Number(document.getElementById("bioVal").value || 0),
+        photo: measurePhotoBase64
+      };
+
+      data.measurements.push(measurement);
+      setData(data);
+
+      measurePhotoBase64 = "";
+      document.getElementById("measurePreview").style.display = "none";
+
+      alert("Biometrik o‘lchov saqlandi.");
+      goPage("historyPage");
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const data = getData();
+      const box = document.getElementById("historyList");
+
+      if (data.measurements.length === 0) {
+        box.innerHTML = `<div class="empty">Hali kuzatuv ma’lumotlari kiritilmagan.</div>`;
+        return;
+      }
+
+      const sorted = [...data.measurements].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      box.innerHTML = sorted.map(m => {
+        const plant = data.plants.find(p => p.id === m.plantId);
+        return `
+          <div class="history-card">
+            <b>${plant ? plant.name : "Noma’lum o‘simlik"}</b><br>
+            Sana: ${formatDate(m.date)}<br>
+            Bo‘y: ${m.height} sm, Barg soni: ${m.leaf} dona<br>
+            Poya qalinligi: ${m.stem} mm, Ildiz uzunligi: ${m.root} sm<br>
+            Barg maydoni: ${m.area} sm², Biomassa: ${m.biomass} g
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderPhotos() {
+      const data = getData();
+      const grid = document.getElementById("photoGrid");
+
+      const photos = [];
+
+      data.plants.forEach(p => {
+        if (p.image && p.image.startsWith("data:image")) {
+          photos.push({ src: p.image, title: p.name });
+        }
+      });
+
+      data.measurements.forEach(m => {
+        if (m.photo) {
+          const plant = data.plants.find(p => p.id === m.plantId);
+          photos.push({ src: m.photo, title: plant ? plant.name : "O‘simlik" });
+        }
+      });
+
+      if (photos.length === 0) {
+        grid.innerHTML = `<div class="empty" style="grid-column: 1 / 3;">Hali yuklangan fotosuratlar yo‘q.</div>`;
+        return;
+      }
+
+      grid.innerHTML = photos.map(p => `
+        <div>
+          <img src="${p.src}" alt="${p.title}">
+          <div class="small-note">${p.title}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderAnalysis() {
+      const data = getData();
+      const box = document.getElementById("analysisBox");
+      const canvas = document.getElementById("chartCanvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (data.measurements.length === 0) {
+        box.innerHTML = `<div class="empty">Tahlil uchun ma’lumot yetarli emas.</div>`;
+        return;
+      }
+
+      const last = data.measurements[data.measurements.length - 1];
+      const plant = data.plants.find(p => p.id === last.plantId);
+
+      const plantMeasurements = data.measurements
+        .filter(m => m.plantId === last.plantId)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      const heights = plantMeasurements.map(m => m.height);
+      const maxHeight = Math.max(...heights);
+      const minHeight = Math.min(...heights);
+      const avgHeight = (heights.reduce((a, b) => a + b, 0) / heights.length).toFixed(1);
+
+      box.innerHTML = `
+        <div class="analysis-card">
+          <b>${plant ? plant.name : "O‘simlik"}</b><br>
+          O‘lchovlar soni: ${plantMeasurements.length}<br>
+          Eng past bo‘y: ${minHeight} sm<br>
+          Eng yuqori bo‘y: ${maxHeight} sm<br>
+          O‘rtacha bo‘y: ${avgHeight} sm
+        </div>
+      `;
+
+      drawChart(canvas, plantMeasurements);
+    }
+
+    function drawChart(canvas, items) {
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      const pad = 35;
+
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = "#dddddd";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad, 15);
+      ctx.lineTo(pad, h - pad);
+      ctx.lineTo(w - 15, h - pad);
+      ctx.stroke();
+
+      if (items.length === 0) return;
+
+      const values = items.map(i => i.height);
+      const max = Math.max(...values, 1);
+      const min = Math.min(...values, 0);
+      const range = max - min || 1;
+
+      const stepX = items.length === 1 ? 0 : (w - pad - 25) / (items.length - 1);
+
+      ctx.strokeStyle = "#0d6d23";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      items.forEach((item, index) => {
+        const x = pad + index * stepX;
+        const y = (h - pad) - ((item.height - min) / range) * (h - pad - 25);
+
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      ctx.stroke();
+
+      items.forEach((item, index) => {
+        const x = pad + index * stepX;
+        const y = (h - pad) - ((item.height - min) / range) * (h - pad - 25);
+
+        ctx.fillStyle = "#0d6d23";
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#222";
+        ctx.font = "11px Arial";
+        ctx.fillText(item.height + " sm", x - 15, y - 9);
+      });
+    }
+
+    function clearAllData() {
+      const ok = confirm("Barcha saqlangan ma’lumotlar o‘chirilsinmi?");
+      if (!ok) return;
+
+      localStorage.removeItem(STORAGE_KEY);
+      closeDrawer();
+      location.reload();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("plantDate").value = todayDate();
+      document.getElementById("measureDate").value = todayDate();
+
+      getData();
+      renderPlantList();
+      renderPlantSelect();
+    });
+  </script>
+</body>
+</html>
